@@ -32,14 +32,17 @@ jobs:
           restore-keys: |
             mkdocs-material-
 
+      - name: Install system dependencies (Linux)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
+
       - run: pip install -r requirements.txt
 
-      - run: mkdocs build -f mkdocs_pdf.yml
+      - run: mkdocs gh-deploy -f mkdocs_pdf.yml --force
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
           name: document-pdf
           path: site/pdf/document.pdf
-
-      - run: mkdocs gh-deploy --force
