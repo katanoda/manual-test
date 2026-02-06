@@ -35,12 +35,23 @@ PDF生成機能 (`mkdocs-with-pdf`) を使用するためには、**GTK+ (GTK3)*
    <http://127.0.0.1:8000> にアクセスしてください。
 
    **※PDF生成エラーが出る場合（Webのみ確認したい場合）:**
+   デフォルト設定 (`mkdocs.yml`) はPDF生成が無効化されているため、そのまま実行可能です。
 
    ```bash
-   mkdocs serve -f mkdocs_web.yml
+   mkdocs serve
    ```
 
 3. ビルド (PDF生成含む):
+
+   **PDFを含めてビルドする場合 (Windows推奨)**:
+
+   ```bash
+   python build_pdf.py
+   ```
+
+   ※ `build_pdf.py` は、GTK3のパス設定を自動的に行い、エラーを回避します。
+
+   Webのみビルドする場合:
 
    ```bash
    mkdocs build

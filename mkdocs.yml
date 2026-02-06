@@ -35,13 +35,8 @@ nav:
 
 plugins:
   - search
-  - with-pdf:
-      author: Your Company Name
-      copyright: Your Company Name
-      cover: true
-      back_cover: true
-      toc_title: 目次
-      output_path: site/pdf/document.pdf
+  # PDF generation is disabled by default for stability during 'mkdocs serve'.
+  # Use 'mkdocs build -f mkdocs_pdf.yml' to generate PDF.
 
 markdown_extensions:
   - admonition

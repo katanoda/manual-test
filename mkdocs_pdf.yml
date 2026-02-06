@@ -1,4 +1,4 @@
-site_name: 製品取扱説明書 (Web版)
+site_name: 製品取扱説明書
 site_url: https://example.com/
 site_description: 製品の機能、インストール方法、使い方に関する包括的なマニュアル。
 
@@ -35,8 +35,13 @@ nav:
 
 plugins:
   - search
-  # PDF generation plugin is disabled for Web-only preview
-  # - with-pdf: ...
+  - with-pdf:
+      author: Your Company Name
+      copyright: Your Company Name
+      cover: true
+      back_cover: true
+      toc_title: 目次
+      output_path: site/pdf/document.pdf
 
 markdown_extensions:
   - admonition
