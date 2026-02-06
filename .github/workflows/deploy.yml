@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Configure Git Credentials
         run: |
@@ -41,8 +43,30 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - run: mkdocs gh-deploy -f mkdocs_pdf.yml --force
+      # 1. Main Branch Push -> Deploy to 'dev' version
+      - name: Deploy dev version
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          mike deploy dev --push --config-file mkdocs_pdf.yml
 
+      # 2. Tag Push -> Deploy to tag version (e.g. v1.0) and update 'latest'
+      - name: Deploy release version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          # Extract tag name (e.g., refs/tags/v1.0 -> v1.0)
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          mike deploy $TAG_NAME latest --push --update-aliases --config-file mkdocs_pdf.yml
+
+      # 3. Release Asset Upload (PDF) - Only on Tag
+      - name: Upload PDF to Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: site/pdf/document.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 4. Upload Artifact (optional backup)
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:

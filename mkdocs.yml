@@ -23,6 +23,10 @@ theme:
         icon: material/brightness-4
         name: switch to light mode
 
+extra:
+  version:
+    provider: mike
+
 docs_dir: doc
 
 nav:
