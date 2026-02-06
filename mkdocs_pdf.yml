@@ -49,7 +49,7 @@ plugins:
       cover: true
       back_cover: true
       toc_title: 目次
-      output_path: site/pdf/document.pdf
+      output_path: pdf/document.pdf
 
 markdown_extensions:
   - admonition
