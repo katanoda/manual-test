@@ -58,6 +58,10 @@ jobs:
           mike deploy $TAG_NAME latest --push --update-aliases --config-file mkdocs_pdf.yml
 
       # 3. Release Asset Upload (PDF) - Only on Tag
+      - name: Build PDF for Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: mkdocs build -f mkdocs_pdf.yml
+
       - name: Upload PDF to Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
