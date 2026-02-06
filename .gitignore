@@ -1,0 +1,19 @@
+# MkDocs built site
+site/
+
+# PDF output
+*.pdf
+
+# Python virtual environment
+venv/
+.venv/
+env/
+.env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# OS specific
+.DS_Store
+Thumbs.db
