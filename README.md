@@ -1,89 +1,122 @@
-# 製品取扱説明書生成のためのプロジェクト
+# 製品取扱説明書生成プロジェクト
 
-Markdownで記述し、MkDocsを使用してWebサイトおよびPDFとして出力するためのドキュメントプロジェクトです。
+Markdownで記述されたドキュメントを、MkDocsを使用してWebサイトおよびPDFとして出力するためのプロジェクトです。
+
+## 目次
+
+1. [概要](#概要)
+2. [前提条件](#前提条件)
+3. [ローカルでの実行方法](#ローカルでの実行方法)
+4. [自動デプロイとリリース](#自動デプロイとリリース)
+5. [ディレクトリ構成](#ディレクトリ構成)
+
+---
 
 ## 概要
 
-- **ツール**: MkDocs, mkdocs-material, mkdocs-with-pdf
-- **エントリポイント**: `doc/manual.md`
-- **出力**: GitHub Pages (Web), PDF
+- **使用ツール**:
+  - [MkDocs](https://www.mkdocs.org/): 静的サイトジェネレーター
+  - [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/): テーマ
+  - [mkdocs-with-pdf](https://github.com/orzklv/mkdocs-with-pdf): PDF生成
+  - [mike](https://github.com/jimporter/mike): バージョン管理
 
-## 自動デプロイとバージョン管理
+- **主な機能**:
+  - Webドキュメントの生成（レスポンシブ、検索機能付き）
+  - PDFドキュメントの自動生成
+  - GitHub Actionsによる自動デプロイとバージョン管理
 
-GitHub Actions と `mike` を使用して、バージョンごとのドキュメント管理を行います。
+---
 
-1. **`main` ブランチへのプッシュ**:
-   - 自動的に `dev` バージョンとしてデプロイされます。
-   - URL: `https://<user>.github.io/<repo>/dev/`
+## 前提条件
 
-2. **タグのプッシュ (`v*`)**:
-   - `v1.0` などのタグをプッシュすると、そのバージョンのドキュメントとしてデプロイされます。
-   - 同時に `latest` エイリアスも更新されます。
-   - PDFファイルは **GitHub Releases** のAssetsに追加されます。
-   - コマンド例:
+### 共通
 
-     ```bash
-     git tag v1.0
-     git push origin v1.0
-     ```
+- **Python**: バージョン 3.12 以上推奨
 
-## 前提条件 (Windowsユーザー向けの注意)
+### Windowsユーザー向けの注意 (PDF生成)
 
-PDF生成機能 (`mkdocs-with-pdf`) を使用するためには、**GTK+ (GTK3)** ライブラリが必要です。
-これがない場合、`OSError: cannot load library ...` というエラーが発生してビルドに失敗します。
+PDF生成機能を使用するには、**GTK+ (GTK3)** ライブラリが必要です。
 
 1. **[GTK3 for Windows Runtime](https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer/releases)** からインストーラーをダウンロードしてインストールしてください。
 2. インストール後、PCを再起動してください。
 
-> **Note**: PDF生成が不要であれば、後述の「Webプレビューのみ」の手順で回避可能です。
+> **Note**: Webプレビューのみであれば、GTK3は不要です。
+
+---
 
 ## ローカルでの実行方法
 
-1. 依存関係のインストール:
+### 1. セットアップ
+
+必要な依存パッケージをインストールします。
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. プレビュー (Webサイト)
+
+開発用サーバーを起動してブラウザで確認します。デフォルトではWeb版のみビルドされます（高速・安定）。
+
+```bash
+mkdocs serve
+```
+
+起動後、 <http://127.0.0.1:8000> にアクセスしてください。
+
+### 3. PDFビルド
+
+Windows環境でPDFを含めて完全なビルドを行う場合は、付属のスクリプトを使用します（GTK3パス問題の回避用）。
+
+```bash
+python build_pdf.py
+```
+
+成果物は `site/` ディレクトリ配下に出力されます。
+
+- Web: `site/index.html` 等
+- PDF: `site/pdf/document.pdf`
+
+---
+
+## 自動デプロイとリリース
+
+GitHub Actionsにより、ドキュメントのビルド・公開・リリースが自動化されています。
+
+### 開発版の更新 (`main` ブランチ)
+
+`main` ブランチに変更をプッシュすると、**開発版 (dev)** としてWebサイトが更新されます。
+
+- URL: `https://<user>.github.io/<repo>/dev/`
+
+### リリース版の作成 (タグ `v*`)
+
+`v1.0` などのバージョンタグをプッシュすると、正式な**リリース版**として保存されます。
+
+1. **タグの作成とプッシュ**:
 
    ```bash
-   pip install -r requirements.txt
+   git tag v1.0
+   git push origin v1.0
    ```
 
-2. プレビューサーバー起動:
+2. **自動処理される内容**:
+   - Webサイト: `/v1.0/` にドキュメントが生成され、`/latest` がこのバージョンを指すようになります。
+   - PDF: 生成された `document.pdf` が、GitHubリポジトリの **[Releases]** ページにアセットとして追加されます。
 
-   ```bash
-   mkdocs serve
-   ```
-
-   <http://127.0.0.1:8000> にアクセスしてください。
-
-   **※PDF生成エラーが出る場合（Webのみ確認したい場合）:**
-   デフォルト設定 (`mkdocs.yml`) はPDF生成が無効化されているため、そのまま実行可能です。
-
-   ```bash
-   mkdocs serve
-   ```
-
-3. ビルド (PDF生成含む):
-
-   **PDFを含めてビルドする場合 (Windows推奨)**:
-
-   ```bash
-   python build_pdf.py
-   ```
-
-   ※ `build_pdf.py` は、GTK3のパス設定を自動的に行い、エラーを回避します。
-
-   Webのみビルドする場合:
-
-   ```bash
-   mkdocs build
-   ```
-
-   `site/` ディレクトリ配下に出力されます。
+---
 
 ## ディレクトリ構成
 
-- `doc/`: ドキュメントのソースファイル
-  - `manual.md`: トップページ
-  - `chapters/`: 各チャプターのMarkdownファイル
-- `mkdocs.yml`: MkDocsの設定ファイル
-- `.github/workflows/`: GitHub Actionsの設定ファイル
-
-詳細な検証方法や使い方は [walkthrough.md] を参照してください（※BrainArtifacts内に生成されています）。
+```text
+.
+├── doc/                        # ドキュメントのソース
+│   ├── index.md                # トップページ
+│   ├── chapters/               # 各章のMarkdownファイル
+│   └── images/                 # 画像ファイル
+├── mkdocs.yml                  # Webプレビュー用設定 (通常用)
+├── mkdocs_pdf.yml              # PDF生成・本番ビルド用設定
+├── build_pdf.py                # Windows用PDFビルドスクリプト
+├── requirements.txt            # Python依存関係
+└── .github/workflows/          # CI/CD設定
+```
