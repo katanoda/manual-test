@@ -1,0 +1,9 @@
+@page {
+    size: A4 portrait;
+    margin: 20mm;
+}
+
+/* Optional: Adjust body width for printing if needed, though WeasyPrint handles this well with @page */
+body {
+    font-family: "Noto Sans JP", sans-serif;
+}
