@@ -26,7 +26,7 @@ theme:
 docs_dir: doc
 
 nav:
-  - top: manual.md
+  - top: index.md
   - はじめに: chapters/introduction.md
   - インストール: chapters/installation.md
   - 基本的な使い方: chapters/usage.md
