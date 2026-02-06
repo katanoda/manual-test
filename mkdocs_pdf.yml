@@ -25,6 +25,9 @@ theme:
 
 docs_dir: doc
 
+extra_css:
+  - css/pdf.css
+
 nav:
   - top: index.md
   - はじめに: chapters/introduction.md
